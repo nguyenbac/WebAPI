@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Comments.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace Web_API_03.Models
 {
-    public class DictionaryCommentRespository : ICommentRespository
+    public class DictionaryCommentRespository : ICommentRepository
     {
         int nextID = 0;
         Dictionary<int, Comment> comments = new Dictionary<int, Comment>();

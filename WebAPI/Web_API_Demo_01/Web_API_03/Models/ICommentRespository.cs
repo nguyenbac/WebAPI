@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Web_API_03.Models;
 
-namespace Web_API_03.Models
+namespace Comments.Models
 {
-    public interface ICommentRespository
+    public interface ICommentRepository
     {
         IEnumerable<Comment> Get();
         bool TryGet(int id, out Comment comment);

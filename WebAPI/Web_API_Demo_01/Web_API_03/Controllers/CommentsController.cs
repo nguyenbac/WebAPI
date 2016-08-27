@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Comments.Models;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,36 +11,55 @@ namespace Web_API_03.Controllers
     //[Authorize]
     public class CommentsController : ApiController
     {
-        public ICommentRespository res = new DictionaryCommentRespository();
-        // GET api/values
-        public IEnumerable<Comment> Get()
+        ICommentRepository repository = new InitialData();
+        public CommentsController()
         {
-            return res.Get();
+
+        }
+        public CommentsController(ICommentRepository repository)
+        {
+            this.repository = repository;
         }
 
-        // GET api/values/5
-        public Comment Get(int id)
+        #region GET
+        //[Queryable]
+        public IQueryable<Comment> GetComments()
         {
-            var res = new DictionaryCommentRespository();
+            return repository.Get().AsQueryable();
+        }
+        # endregion
+        public Comment GetComment(int id)
+        {
             Comment comment;
-            if (!res.TryGet(id, out comment))
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+            if (!repository.TryGet(id, out comment))
+                throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
             return comment;
         }
 
         // POST api/values
-        public void Post([FromBody]string value)
+
+       public HttpResponseMessage Post(Comment comment)
         {
+            repository.Add(comment);
+            var response = new HttpResponseMessage(HttpStatusCode.Created);
+            response.Headers.Location = new Uri(Request.RequestUri, "api/comments" + comment.ID.ToString());
+            return response;
         }
 
         // PUT api/values/5
         public void Put(int id, [FromBody]string value)
         {
+
         }
 
         // DELETE api/values/5
-        public void Delete(int id)
+        public Comment Delete(int id)
         {
+            Comment comment;
+            if (!repository.TryGet(id, out comment))
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            repository.Delete(id);
+            return comment;
         }
     }
 }

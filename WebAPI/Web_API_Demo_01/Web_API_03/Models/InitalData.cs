@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Web_API_03.Models;
 
-namespace Web_API_03.Models
+namespace Comments.Models
 {
     public class InitialData : DictionaryCommentRespository
     {
@@ -11,7 +8,7 @@ namespace Web_API_03.Models
         {
             Add(new Comment
             {
-                ID = 0,
+                ID = 1,
                 Text = @"I sat here trying really hard to think of something profound to write for my comment but was left with nothing interesting to say other than this droning on and on that I'm doing right now. But sometimes, droning on and on serves a purpose. For example, this comment appears more realistic without resorting to Lorem Ipsum.",
                 Author = "Phil",
                 Email = "haacked@gmail.com",
