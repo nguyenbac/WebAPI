@@ -1,10 +1,11 @@
-﻿using Comments.Models;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Comments.Models;
 using System.Web.Http;
 using Web_API_03.Models;
+using System.Collections.Generic;
 
 namespace Web_API_03.Controllers
 {
@@ -27,7 +28,13 @@ namespace Web_API_03.Controllers
         {
             return repository.Get().AsQueryable();
         }
-        # endregion
+        #endregion
+        #region Paging get
+        public IEnumerable<Comment> Getcomments(int pageindex, int pagesize)
+        {
+            return repository.Get().Skip(pageindex * pagesize).Take(pagesize);
+        }
+        #endregion
         public Comment GetComment(int id)
         {
             Comment comment;
@@ -41,8 +48,8 @@ namespace Web_API_03.Controllers
        public HttpResponseMessage Post(Comment comment)
         {
             repository.Add(comment);
-            var response = new HttpResponseMessage(HttpStatusCode.Created);
-            response.Headers.Location = new Uri(Request.RequestUri, "api/comments" + comment.ID.ToString());
+            var response = new HttpResponseMessage (HttpStatusCode.Created);
+            response.Headers.Location = new Uri(Request.RequestUri, "api/comments/" + comment.ID.ToString());
             return response;
         }
 
@@ -61,5 +68,6 @@ namespace Web_API_03.Controllers
             repository.Delete(id);
             return comment;
         }
+       
     }
 }

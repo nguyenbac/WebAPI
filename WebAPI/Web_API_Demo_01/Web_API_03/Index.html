@@ -36,6 +36,35 @@
         </div>
 
         <ul data-bind="template: {name: 'commentTemplate', foreach: comments}"></ul>
+        <form id="newCommentForm">
+            <fieldset>
+                <legend>New Comment</legend>
+                <label for="text">Comment</label>
+                <textarea id="text" name="text" type="text" value="text"></textarea>
+                <label for="author">Author</label>
+                <input id="author" name="author" type="text" value="author" />
+                <label for="email">Email</label>
+                <input id="email" name="email" type="text" value="email" />
+                <button type="submit">Submit</button>
+            </fieldset>
+        </form>
+        <script id="commentTemplate" type="text/html">
+            <li class="comment">
+                <header>
+                    <div class="info">
+                        <img data-bind="attr: {src: GravatarUrl}" />
+                        <strong><span data-bind="text: Author"></span></strong>
+                    </div>
+                    <div class="actions">
+                        <a class="delete" data-bind="attr: { 'data-comment-id': ID }" href="#">Delete Id: <span data-bind="text: ID" /></a>
+                    </div>
+                </header>
+                <div class="body">
+                    <p data-bind="text: Text"></p>
+
+                </div>
+            </li>
+        </script>
 
         <script id="commentTemplate" type="text/html">
             <li class="comment">
@@ -57,6 +86,8 @@
                 comments: ko.observableArray([])
             };
             ko.applyBindings(viewModel);
+
+            // get
             $(function () {
                 $("#getComments").click(function () {
                     // We're using a Knockout model. This clears out the existing comments.
@@ -70,6 +101,53 @@
 
                 });
             });
+
+            // post
+            $(function () {
+                var form = $('#newCommentForm');
+                form.submit(function () {
+                    var form = $(this);
+                    var comment = { ID: 0,  Text: $('#text').val(), Author: $('#author').val(), Email: $('#email').val() }
+                    var json = JSON.stringify(comment);
+                    $.ajax({
+                        url: 'api/comments',
+                        cache: false,
+                        type: 'POST',
+                        data: json,
+                        contentType: 'application/json; charset-utf-8',
+                        statusCode: {
+                            201: function (data) {
+                                viewModel.comments.push(data);
+                            }
+                        }
+                    });
+                    return false;
+                 });
+            });
+
+            // delete 
+            $(function () {
+                $('a.delete').live('click', function () {
+                    var id = $(this).data('comment-id');
+
+                    $.ajax({
+                        url: "/api/comments/" + id,
+                        type: 'DELETE',
+                        cache: false,
+                        statusCode: {
+                            200: function (data) {
+                                viewModel.comments.remove(
+                                    function (comment) {
+                                        return comment.ID == data.ID;
+                                    }
+                               );
+                            }
+                        }
+                    });
+
+                });
+            });
+           
         </script>
     </div>
 </body>
